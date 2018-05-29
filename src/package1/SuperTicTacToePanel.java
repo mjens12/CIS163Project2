@@ -19,8 +19,6 @@ public class SuperTicTacToePanel extends JPanel {
 	private ImageIcon oIcon;
 	private ImageIcon emptyIcon;
 
-	private static int BDSIZE = 3;
-
 	private void SuperTicTacToePanel() {
 		quitButton = new JButton("Quit Game");
 
@@ -40,8 +38,8 @@ public class SuperTicTacToePanel extends JPanel {
 
 		panel1.setLayout(layout);
 
-		for (int row = 0; row < BDSIZE; row++)
-			for (int col = 0; col < BDSIZE; col++) {
+		for (int row = 0; row < SuperTicTacToeGame.BDSIZE; row++)
+			for (int col = 0; col < SuperTicTacToeGame.BDSIZE; col++) {
 				board[row][col] = new JButton("", emptyIcon);
 				board[row][col].addActionListener(buttonListen);
 				panel1.add(board[row][col]);
@@ -49,8 +47,8 @@ public class SuperTicTacToePanel extends JPanel {
 	}
 
 	private void displayBoard() {
-		for (int row = 0; row < BDSIZE; row++)
-			for (int col = 0; col < BDSIZE; col++) {
+		for (int row = 0; row < SuperTicTacToeGame.BDSIZE; row++)
+			for (int col = 0; col < SuperTicTacToeGame.BDSIZE; col++) {
 				iCell = game.getCell(row, col);
 				// TODO: ImageIcon icon = icon for iCell
 				board[row][col].setIcon(icon);
@@ -60,8 +58,8 @@ public class SuperTicTacToePanel extends JPanel {
 	private class ButtonListener implements ActionListener {
 
 		public void actionPerformed(ActionEvent e) {
-			for (int row = 0; row < BDSIZE; row++)
-				for (int col = 0; col < BDSIZE; col++)
+			for (int row = 0; row < SuperTicTacToeGame.BDSIZE; row++)
+				for (int col = 0; col < SuperTicTacToeGame.BDSIZE; col++)
 					if (board[row][col] == e.getSource())
 						// tell the game which button was selected.
 						game.select(row, col);
