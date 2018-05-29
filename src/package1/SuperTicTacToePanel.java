@@ -35,6 +35,8 @@ public class SuperTicTacToePanel extends JPanel {
 
 		GridLayout layout = new GridLayout(3, 3);
 
+		game = new SuperTicTacToeGame();
+
 		panel1.setLayout(layout);
 
 		for (int row = 0; row < BDSIZE; row++)
@@ -56,7 +58,12 @@ public class SuperTicTacToePanel extends JPanel {
 
 	private class ButtonListener implements ActionListener {
 
-		public void actionPerformed(ActionEvent event) {
+		public void actionPerformed(ActionEvent e) {
+			for (int row = 0; row < BDSIZE; row++)
+				for (int col = 0; col < BDSIZE; col++)
+					if (board[row][col] == e.getSource())
+						// tell the game which button was selected.
+						game.select(row, col);
 		}
 	}
 }
