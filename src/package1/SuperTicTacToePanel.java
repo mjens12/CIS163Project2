@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class SuperTicTacToePanel extends JPanel {
@@ -64,6 +65,13 @@ public class SuperTicTacToePanel extends JPanel {
 					if (board[row][col] == e.getSource())
 						// tell the game which button was selected.
 						game.select(row, col);
+
+			displayBoard();
+
+			if (game.getGameStatus() == GameStatus.O_WON) {
+				JOptionPane.showMessageDialog(null,
+						"O won and X lost!\n The game will reset");
+			}
 		}
 	}
 }
