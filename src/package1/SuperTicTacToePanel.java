@@ -34,6 +34,8 @@ public class SuperTicTacToePanel extends JPanel {
 	private ImageIcon xIcon;
 	private ImageIcon oIcon;
 
+	// Max's Branch
+
 	public SuperTicTacToePanel(JMenuItem pquitItem,
 			JMenuItem pgameItem) {
 
