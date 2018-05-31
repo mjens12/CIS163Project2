@@ -43,11 +43,27 @@ public class SuperTicTacToeGame {
 			}
 		}
 
+		for (int r = 0; r < 3; r++) {
+			if (board[r][0] == CellStatus.O
+					&& board[r][1] == CellStatus.O
+					&& board[r][2] == CellStatus.O) {
+				return GameStatus.O_WON;
+			}
+		}
+
 		for (int c = 0; c < 3; c++) {
 			if (board[0][c] == CellStatus.O
 					&& board[1][c] == CellStatus.O
 					&& board[2][c] == CellStatus.O) {
 				return GameStatus.O_WON;
+			}
+		}
+
+		for (int c = 0; c < 3; c++) {
+			if (board[0][c] == CellStatus.X
+					&& board[1][c] == CellStatus.X
+					&& board[2][c] == CellStatus.X) {
+				return GameStatus.X_WON;
 			}
 		}
 

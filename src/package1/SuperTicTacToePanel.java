@@ -43,9 +43,9 @@ public class SuperTicTacToePanel extends JPanel {
 		JPanel bottom = new JPanel();
 		JPanel center = new JPanel();
 
-		xIcon = new ImageIcon("src/lab4/X.png");
-		oIcon = new ImageIcon("src/lab4/O.png");
-		emptyIcon = new ImageIcon("src/lab4/empty.png");
+		xIcon = new ImageIcon("src/package1/X.png");
+		oIcon = new ImageIcon("src/package1/O.png");
+		emptyIcon = new ImageIcon("src/package1/empty.png");
 
 		// create game, listeners
 		ButtonListener listener = new ButtonListener();
@@ -67,7 +67,7 @@ public class SuperTicTacToePanel extends JPanel {
 		// create the board
 		center.setLayout(
 				new GridLayout(userInput, userInput, userInput, 2));
-		Dimension temp = new Dimension(60, 60);
+		Dimension temp = new Dimension(100, 100);
 
 		board = new JButton[userInput][userInput];
 
