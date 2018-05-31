@@ -18,7 +18,6 @@ import javax.swing.border.LineBorder;
 
 public class SuperTicTacToePanel extends JPanel {
 
-	private static final long serialVersionUID = 1L;
 	private JButton[][] board;
 	private CellStatus[][] iBoard;
 	private JLabel xWon;
@@ -59,13 +58,21 @@ public class SuperTicTacToePanel extends JPanel {
 		undoButton = new JButton("Undo");
 		undoButton.addActionListener(listener);
 
-		// create the board
-		center.setLayout(new GridLayout(3, 3, 3, 2));
-		Dimension temp = new Dimension(100, 100);
-		board = new JButton[3][3];
+		// Get input for board length
+		String inputValue = JOptionPane.showInputDialog(
+				"Please input a value between 3 and 9:");
+		int userInput = Integer.parseInt(inputValue);
+		game = new SuperTicTacToeGame(userInput);
 
-		for (int row = 0; row < 3; row++)
-			for (int col = 0; col < 3; col++) {
+		// create the board
+		center.setLayout(
+				new GridLayout(userInput, userInput, userInput, 2));
+		Dimension temp = new Dimension(60, 60);
+
+		board = new JButton[userInput][userInput];
+
+		for (int row = 0; row < board.length; row++)
+			for (int col = 0; col < board.length; col++) {
 
 				Border thickBorder = new LineBorder(Color.blue, 2);
 
@@ -136,9 +143,9 @@ public class SuperTicTacToePanel extends JPanel {
 
 			displayBoard();
 
-			// Note: This code only checks if O wins-- no other win
-			// conditions
-			// The other win conditions should be added later
+			// WINNING__________
+
+			// O wins
 			if (game.getGameStatus() == GameStatus.O_WON) {
 				JOptionPane.showMessageDialog(null,
 						"O won and X lost!\n The game will reset");
@@ -147,7 +154,15 @@ public class SuperTicTacToePanel extends JPanel {
 				oWon.setText(
 						"" + (Integer.parseInt(oWon.getText()) + 1));
 			}
+			// X wins
+			if (game.getGameStatus() == GameStatus.X_WON) {
+				JOptionPane.showMessageDialog(null,
+						"X won and O lost!\n The game will reset");
+				game.reset();
+				displayBoard();
+				oWon.setText(
+						"" + (Integer.parseInt(xWon.getText()) + 1));
+			}
 		}
 	}
 }
-// TESTING
