@@ -43,7 +43,6 @@ public class SuperTicTacToePanel extends JPanel {
 		JPanel bottom = new JPanel();
 		JPanel center = new JPanel();
 
-		//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAhhelofrien
 		xIcon = new ImageIcon("src/package1/X.png");
 		oIcon = new ImageIcon("src/package1/O.png");
 		emptyIcon = new ImageIcon("src/package1/empty.png");
