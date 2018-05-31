@@ -18,6 +18,7 @@ import javax.swing.border.LineBorder;
 
 public class SuperTicTacToePanel extends JPanel {
 
+	private static final long serialVersionUID = 1L;
 	private JButton[][] board;
 	private CellStatus[][] iBoard;
 	private JLabel xWon;
