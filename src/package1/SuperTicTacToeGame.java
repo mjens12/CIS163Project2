@@ -114,12 +114,7 @@ public class SuperTicTacToeGame {
 		return GameStatus.CATS;
 	}
 
-	/*
-	 * TO DO 5, if you have the time...
-	 *
-	 * Make an Undo feature.
-	 */
-
+	// TODO make undo
 	public boolean undo() {
 		return false;
 	}
