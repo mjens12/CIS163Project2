@@ -64,14 +64,17 @@ public class SuperTicTacToePanel extends JPanel {
 		String inputValue = JOptionPane.showInputDialog(
 				"Please input a value between 3 and 9:");
 		int userInput = Integer.parseInt(inputValue);
-		game = new SuperTicTacToeGame(userInput);
+		if (userInput > 2 && userInput < 10)
+			game = new SuperTicTacToeGame(userInput);
+		else
+			throw new IllegalArgumentException();
 
+		// Get input for win length
 		String inputValue2 = JOptionPane.showInputDialog(
-				"Please input the number of marks in a row to win. NOTE: must be equal to or less than the board size");
+				"Please input the number of marks in a row to win. \nNOTE: must be equal to or less than the board size");
 		int toWinInput = Integer.parseInt(inputValue2);
 		if (toWinInput <= userInput)
 			game.setConnections(toWinInput - 1);
-
 		else
 			throw new IllegalArgumentException();
 
@@ -175,6 +178,13 @@ public class SuperTicTacToePanel extends JPanel {
 				displayBoard();
 				oWon.setText(
 						"" + (Integer.parseInt(xWon.getText()) + 1));
+			}
+
+			if (game.getGameStatus() == GameStatus.CATS) {
+				JOptionPane.showMessageDialog(null,
+						"Cats game!\nThe game will reset");
+				game.reset();
+				displayBoard();
 			}
 		}
 	}

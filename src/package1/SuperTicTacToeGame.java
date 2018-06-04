@@ -105,53 +105,13 @@ public class SuperTicTacToeGame {
 			tempConnections = 0;
 		}
 
-		return GameStatus.IN_PROGRESS;
-
-		// // 3x3 board code below
-		// for (int r = 0; r < 3; r++) {
-		// if (board[r][0] == CellStatus.X
-		// && board[r][1] == CellStatus.X
-		// && board[r][2] == CellStatus.X) {
-		// return GameStatus.X_WON;
-		// }
-		// }
-		//
-		// for (int r = 0; r < 3; r++) {
-		// if (board[r][0] == CellStatus.O
-		// && board[r][1] == CellStatus.O
-		// && board[r][2] == CellStatus.O) {
-		// return GameStatus.O_WON;
-		// }
-		// }
-		//
-		// for (int c = 0; c < 3; c++) {
-		// if (board[0][c] == CellStatus.O
-		// && board[1][c] == CellStatus.O
-		// && board[2][c] == CellStatus.O) {
-		// return GameStatus.O_WON;
-		// }
-		// }
-		//
-		// for (int c = 0; c < 3; c++) {
-		// if (board[0][c] == CellStatus.X
-		// && board[1][c] == CellStatus.X
-		// && board[2][c] == CellStatus.X) {
-		// return GameStatus.X_WON;
-		// }
-		// }
-		//
-		// /*
-		// * TODO 4: Change all code to allow any size board (i.e., not
-		// * just 3) Change the code from TODO 3 to allow a horizontal
-		// win
-		// * of any length, defined by 'this.connections' (see above)
-		// * (Hint: you will also need to think about how
-		// this.connections
-		// * should be set)
-		// */
-		//
-		// return GameStatus.IN_PROGRESS;
-		//
+		for (int r = 0; r < size; r++) {
+			for (int c = 0; c < size; c++) {
+				if (board[r][c] == CellStatus.EMPTY)
+					return GameStatus.IN_PROGRESS;
+			}
+		}
+		return GameStatus.CATS;
 	}
 
 	/*
