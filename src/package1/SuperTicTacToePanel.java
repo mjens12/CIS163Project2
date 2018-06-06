@@ -1,4 +1,3 @@
-// test
 package package1;
 
 import java.awt.BorderLayout;
