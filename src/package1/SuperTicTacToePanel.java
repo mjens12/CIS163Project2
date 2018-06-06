@@ -66,6 +66,15 @@ public class SuperTicTacToePanel extends JPanel {
 		int userInput = Integer.parseInt(inputValue);
 		game = new SuperTicTacToeGame(userInput);
 
+		// Get input for win length
+		String inputValue2 = JOptionPane.showInputDialog(
+				"Please input the number of marks in a row to win. \nNOTE: must be equal to or less than the board size");
+		int toWinInput = Integer.parseInt(inputValue2);
+		if (toWinInput <= userInput)
+			game.setConnections(toWinInput);
+		else
+			throw new IllegalArgumentException();
+
 		// create the board
 		center.setLayout(
 				new GridLayout(userInput, userInput, userInput, 2));

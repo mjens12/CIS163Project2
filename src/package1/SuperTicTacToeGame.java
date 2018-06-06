@@ -134,6 +134,10 @@ public class SuperTicTacToeGame {
 	public void undo() {
 		Point p = undoList.remove(undoList.size() - 1);
 		board[p.y][p.x] = CellStatus.EMPTY;
+		if (turn == CellStatus.O)
+			turn = CellStatus.X;
+		else
+			turn = CellStatus.O;
 		// TODO need to account for whose turn it is
 	}
 
