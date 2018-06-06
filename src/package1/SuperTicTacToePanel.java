@@ -1,3 +1,4 @@
+// test
 package package1;
 
 import java.awt.BorderLayout;
@@ -136,8 +137,11 @@ public class SuperTicTacToePanel extends JPanel {
 			if (quitButton == e.getSource())
 				System.exit(0);
 
-			for (int r = 0; r < board.length; r++) {
-				for (int c = 0; c < board.length; c++) {
+			if (undoButton == e.getSource())
+				game.undo();
+
+			for (int r = 0; r < board.length; r++)
+				for (int c = 0; c < board.length; c++)
 					if (board[r][c] == e.getSource()
 							&& game.getOK(r, c))
 						game.select(r, c);
