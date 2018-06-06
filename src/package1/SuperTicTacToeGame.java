@@ -9,7 +9,6 @@ public class SuperTicTacToeGame {
 	private int size;
 	private CellStatus turn;
 	private int connections;
-	private ArrayList<Point> undoList;
 
 	public SuperTicTacToeGame(int size) {
 		status = GameStatus.IN_PROGRESS;
@@ -17,7 +16,6 @@ public class SuperTicTacToeGame {
 		this.connections = 3;
 		board = new CellStatus[size][size];
 		turn = CellStatus.X;
-		undoList = new ArrayList<Point>();
 		reset();
 	}
 
@@ -30,10 +28,8 @@ public class SuperTicTacToeGame {
 	}
 
 	public void select(int row, int col) {
-
-		if (board[row][col] != CellStatus.EMPTY) {
+		if (board[row][col] != CellStatus.EMPTY)
 			return;
-		}
 
 		board[row][col] = turn;
 
@@ -41,12 +37,15 @@ public class SuperTicTacToeGame {
 			turn = CellStatus.X;
 		else
 			turn = CellStatus.O;
-
-		undoList.add(new Point(col, row));
-
 		status = isWinner();
 	}
 
+	private GameStatus isWinner() {
+		int tempConnections = 0;
+
+		// Working on larger board sizes here
+		// Checks X horizontal
+		for (int r = 0; r < size; r++) {
 	private GameStatus isWinner() {
 		int tempConnections = 0;
 
@@ -121,19 +120,10 @@ public class SuperTicTacToeGame {
 					return GameStatus.IN_PROGRESS;
 			}
 		}
-		return GameStatus.CATS;
-	}
 
-	/*
-	 * TO DO 5, if you have the time...
-	 *
-	 * Make an Undo feature.
-	 */
-
-	public void undo() {
-		Point p = undoList.remove(undoList.size() - 1);
-		board[p.y][p.x] = CellStatus.EMPTY;
-		// TODO need to account for whose turn it is
+	// TODO make undo
+	public boolean undo() {
+		return false;
 	}
 
 	public GameStatus getGameStatus() {
