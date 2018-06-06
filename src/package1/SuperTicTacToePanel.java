@@ -43,7 +43,7 @@ public class SuperTicTacToePanel extends JPanel {
 		JPanel bottom = new JPanel();
 		JPanel center = new JPanel();
 
-		//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAhhelofrien
+		// AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAhhelofrien
 		xIcon = new ImageIcon("src/package1/X.png");
 		oIcon = new ImageIcon("src/package1/O.png");
 		emptyIcon = new ImageIcon("src/package1/empty.png");
@@ -135,6 +135,9 @@ public class SuperTicTacToePanel extends JPanel {
 		public void actionPerformed(ActionEvent e) {
 			if (quitButton == e.getSource())
 				System.exit(0);
+
+			if (undoButton == e.getSource())
+				game.undo();
 
 			for (int r = 0; r < board.length; r++)
 				for (int c = 0; c < board.length; c++)
