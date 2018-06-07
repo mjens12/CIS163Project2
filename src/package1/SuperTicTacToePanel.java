@@ -1,4 +1,3 @@
-// test
 package package1;
 
 import java.awt.BorderLayout;
@@ -25,6 +24,7 @@ public class SuperTicTacToePanel extends JPanel {
 	private JLabel oWon;
 	private JButton quitButton;
 	private JButton undoButton;
+	private JButton resetButton;
 
 	private JMenuItem gameItem;
 	private JMenuItem quitItem;
@@ -58,6 +58,8 @@ public class SuperTicTacToePanel extends JPanel {
 		quitButton.addActionListener(listener);
 		undoButton = new JButton("Undo");
 		undoButton.addActionListener(listener);
+		resetButton = new JButton("Reset");
+		resetButton.addActionListener(listener);
 
 		gameItem = new JMenuItem("Quit");
 		quitItem = new JMenuItem("New Game");
@@ -112,6 +114,7 @@ public class SuperTicTacToePanel extends JPanel {
 		bottom.add(oWon);
 		bottom.add(quitButton);
 		bottom.add(undoButton);
+		bottom.add(resetButton);
 
 		// add all to contentPane
 
@@ -151,22 +154,12 @@ public class SuperTicTacToePanel extends JPanel {
 			if (quitItem == e.getSource())
 				System.exit(0);
 
-			if (undoButton == e.getSource())
-				game.undo();
-
-			for (int r = 0; r < board.length; r++)
-				for (int c = 0; c < board.length; c++)
-					if (board[r][c] == e.getSource()
-							&& game.getOK(r, c))
-						game.select(r, c);
-
-			displayBoard();
-
-			if (game.getGameStatus() == GameStatus.CATS) {
-				JOptionPane.showMessageDialog(null,
-						"Cats game!\nThe game will reset");
+			if (resetButton == e.getSource()) {
 				game.reset();
-				displayBoard();
+				// prompt for board and win size and first move
+				// also resets the board size
+				// Get input for board length
+				// run the constructor again?
 			}
 
 			// O wins
@@ -184,7 +177,7 @@ public class SuperTicTacToePanel extends JPanel {
 						"X won and O lost!\n The game will reset");
 				game.reset();
 				displayBoard();
-				oWon.setText(
+				xWon.setText(
 						"" + (Integer.parseInt(xWon.getText()) + 1));
 			}
 		}
