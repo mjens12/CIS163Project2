@@ -15,7 +15,7 @@ public class SuperTicTacToeGame {
 	public SuperTicTacToeGame(int size) {
 		status = GameStatus.IN_PROGRESS;
 		this.size = size;
-		this.connections = 3;
+		this.connections = 0;
 		board = new CellStatus[size][size];
 		turn = CellStatus.X;
 		undoList = new ArrayList<Point>();
@@ -48,97 +48,66 @@ public class SuperTicTacToeGame {
 		status = isWinner();
 	}
 
+	// Check status if X or O wins
+	// Check if symbol wins
+	public GameStatus checkWin(int r, int c) {
+		int equalLengthX = 0;
+		int equalLengthO = 0;
+		int equalLengthXV = 0;
+		int equalLengthOV = 0;
+
+		for (int i = 0; i < connections; i++) {
+			if (board[r][(c + i) % size] == CellStatus.X) {// X HORZ
+				equalLengthX++;
+			}
+			if (board[r][(c + i) % size] == CellStatus.O) {// O HORZ
+				equalLengthO++;
+			}
+			if (board[(r + i) % size][c] == CellStatus.X) {// X VERT
+				equalLengthXV++;
+			}
+			if (board[(r + i) % size][c] == CellStatus.O) {// O VERT
+				equalLengthOV++;
+			}
+
+			if (equalLengthX == connections
+					|| equalLengthXV == connections)
+				return GameStatus.X_WON;
+			if (equalLengthO == connections
+					|| equalLengthOV == connections)
+				return GameStatus.O_WON;
+		}
+		return GameStatus.IN_PROGRESS;
+	}
+
+	// Check status if X or O wins
 	private GameStatus isWinner() {
-		int tempConnections = 0;
-
-		// Working on larger board sizes here
-		// Checks X horizontal
-		for (int r = 0; r < size; r++) {
-			if (board[r][0] == CellStatus.X
-					&& board[r][size - 1] == CellStatus.X)
-				tempConnections++;
-			for (int c = 1; c < size; c++) {
-				if (board[r][c - 1] == CellStatus.X
-						&& board[r][c] == CellStatus.X) {
-					tempConnections++;
-					if (tempConnections == connections)
-						return GameStatus.X_WON;
-				}
+		for (int r = 0; r < size; r++) { // row
+			for (int c = 0; c < size; c++) {// column
+				if (checkWin(r, c) == GameStatus.X_WON
+						|| checkWin(r, c) == GameStatus.O_WON)
+					return checkWin(r, c);
 			}
-			tempConnections = 0;
 		}
-
-		// Checks O horizontal
-		for (int r = 0; r < size; r++) {
-			if (board[r][0] == CellStatus.O
-					&& board[r][size - 1] == CellStatus.O)
-				tempConnections++;
-			for (int c = 1; c < size; c++) {
-				if (board[r][c - 1] == CellStatus.O
-						&& board[r][c] == CellStatus.O) {
-					tempConnections++;
-					if (tempConnections == connections)
-						return GameStatus.O_WON;
-				}
-			}
-			tempConnections = 0;
-		}
-
-		// Checks X vertical
-		for (int c = 0; c < size; c++) {
-			if (board[0][c] == CellStatus.X
-					&& board[size - 1][c] == CellStatus.X)
-				tempConnections++;
-			for (int r = 1; r < size; r++) {
-				if (board[r - 1][c] == CellStatus.X
-						&& board[r][c] == CellStatus.X) {
-					tempConnections++;
-					if (tempConnections == connections)
-						return GameStatus.X_WON;
-				}
-			}
-			tempConnections = 0;
-		}
-
-		// Checks O vertical
-		for (int c = 0; c < size; c++) {
-			if (board[0][c] == CellStatus.O
-					&& board[size - 1][c] == CellStatus.O)
-				tempConnections++;
-			for (int r = 1; r < size; r++) {
-				if (board[r - 1][c] == CellStatus.O
-						&& board[r][c] == CellStatus.O) {
-					tempConnections++;
-					if (tempConnections == connections)
-						return GameStatus.O_WON;
-				}
-			}
-			tempConnections = 0;
-		}
-
 		for (int r = 0; r < size; r++) {
 			for (int c = 0; c < size; c++) {
 				if (board[r][c] == CellStatus.EMPTY)
 					return GameStatus.IN_PROGRESS;
 			}
+
 		}
+
 		return GameStatus.CATS;
 	}
-
-	/*
-	 * TO DO 5, if you have the time...
-	 *
-	 * Make an Undo feature.
-	 */
 
 	public void undo() {
 		Point p = undoList.remove(undoList.size() - 1);
 		board[p.y][p.x] = CellStatus.EMPTY;
+
 		if (turn == CellStatus.O)
 			turn = CellStatus.X;
 		else
 			turn = CellStatus.O;
-		// TODO need to account for whose turn it is
 	}
 
 	public GameStatus getGameStatus() {

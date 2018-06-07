@@ -44,7 +44,6 @@ public class SuperTicTacToePanel extends JPanel {
 		JPanel bottom = new JPanel();
 		JPanel center = new JPanel();
 
-		// AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAhhelofrien
 		xIcon = new ImageIcon("src/package1/X.png");
 		oIcon = new ImageIcon("src/package1/O.png");
 		emptyIcon = new ImageIcon("src/package1/empty.png");
@@ -59,6 +58,9 @@ public class SuperTicTacToePanel extends JPanel {
 		quitButton.addActionListener(listener);
 		undoButton = new JButton("Undo");
 		undoButton.addActionListener(listener);
+
+		gameItem = new JMenuItem("Quit");
+		quitItem = new JMenuItem("New Game");
 
 		// Get input for board length
 		String inputValue = JOptionPane.showInputDialog(
@@ -146,6 +148,9 @@ public class SuperTicTacToePanel extends JPanel {
 			if (quitButton == e.getSource())
 				System.exit(0);
 
+			if (quitItem == e.getSource())
+				System.exit(0);
+
 			if (undoButton == e.getSource())
 				game.undo();
 
@@ -157,7 +162,12 @@ public class SuperTicTacToePanel extends JPanel {
 
 			displayBoard();
 
-			// WINNING__________
+			if (game.getGameStatus() == GameStatus.CATS) {
+				JOptionPane.showMessageDialog(null,
+						"Cats game!\nThe game will reset");
+				game.reset();
+				displayBoard();
+			}
 
 			// O wins
 			if (game.getGameStatus() == GameStatus.O_WON) {
