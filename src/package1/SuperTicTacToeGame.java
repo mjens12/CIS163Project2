@@ -1,32 +1,125 @@
 package package1;
 
+import java.awt.Point;
+import java.util.ArrayList;
+
 public class SuperTicTacToeGame {
-	public static final int BDSIZE = 3;
 	private CellStatus[][] board;
 	private GameStatus status;
+	private int size;
+	private CellStatus turn;
+	private int connections;
+	private ArrayList<Point> undoList;
 
-	public SuperTicTacToeGame() {
+	public SuperTicTacToeGame(int size) {
 		status = GameStatus.IN_PROGRESS;
-		board = new CellStatus[BDSIZE][BDSIZE];
+		this.size = size;
+		this.connections = 0;
+		board = new CellStatus[size][size];
+		turn = CellStatus.X;
+		undoList = new ArrayList<Point>();
+		reset();
+	}
 
-		for (int row = 0; row < BDSIZE; row++)
-			for (int col = 0; col < BDSIZE; col++)
-				board[row][col] = CellStatus.EMPTY;
+	public void setConnections(int connections) {
+		this.connections = connections;
+	}
+
+	public CellStatus[][] getBoard() {
+		return board;
 	}
 
 	public void select(int row, int col) {
 
+		if (board[row][col] != CellStatus.EMPTY) {
+			return;
+		}
+
+		board[row][col] = turn;
+
+		if (turn == CellStatus.O)
+			turn = CellStatus.X;
+		else
+			turn = CellStatus.O;
+
+		undoList.add(new Point(col, row));
+
+		status = isWinner();
 	}
 
-	public void reset() {
+	// Check status if X or O wins
+	// Check if symbol wins
+	public GameStatus checkWin(int r, int c) {
+		int equalLengthX = 0;
+		int equalLengthO = 0;
+		int equalLengthXV = 0;
+		int equalLengthOV = 0;
 
+		for (int i = 0; i < connections; i++) {
+			if (board[r][(c + i) % size] == CellStatus.X) {// X HORZ
+				equalLengthX++;
+			}
+			if (board[r][(c + i) % size] == CellStatus.O) {// O HORZ
+				equalLengthO++;
+			}
+			if (board[(r + i) % size][c] == CellStatus.X) {// X VERT
+				equalLengthXV++;
+			}
+			if (board[(r + i) % size][c] == CellStatus.O) {// O VERT
+				equalLengthOV++;
+			}
+
+			if (equalLengthX == connections
+					|| equalLengthXV == connections)
+				return GameStatus.X_WON;
+			if (equalLengthO == connections
+					|| equalLengthOV == connections)
+				return GameStatus.O_WON;
+		}
+		return GameStatus.IN_PROGRESS;
+	}
+
+	// Check status if X or O wins
+	private GameStatus isWinner() {
+		for (int r = 0; r < size; r++) { // row
+			for (int c = 0; c < size; c++) {// column
+				if (checkWin(r, c) == GameStatus.X_WON
+						|| checkWin(r, c) == GameStatus.O_WON)
+					return checkWin(r, c);
+			}
+		}
+		for (int r = 0; r < size; r++) {
+			for (int c = 0; c < size; c++) {
+				if (board[r][c] == CellStatus.EMPTY)
+					return GameStatus.IN_PROGRESS;
+			}
+
+		}
+
+		return GameStatus.CATS;
+	}
+
+	public void undo() {
+		Point p = undoList.remove(undoList.size() - 1);
+		board[p.y][p.x] = CellStatus.EMPTY;
+
+		if (turn == CellStatus.O)
+			turn = CellStatus.X;
+		else
+			turn = CellStatus.O;
 	}
 
 	public GameStatus getGameStatus() {
-
+		return status;
 	}
 
-	public CellStatus getCell(int row, int col) {
-		return board[row][col];
+	public void reset() {
+		for (int r = 0; r < size; r++)
+			for (int c = 0; c < size; c++)
+				board[r][c] = CellStatus.EMPTY;
+	}
+
+	public boolean getOK(int r, int c) {
+		return board[r][c] == CellStatus.EMPTY;
 	}
 }

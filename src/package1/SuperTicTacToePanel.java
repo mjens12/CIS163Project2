@@ -1,74 +1,184 @@
 package package1;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
 
 public class SuperTicTacToePanel extends JPanel {
+
 	private JButton[][] board;
-	private CellStatus iCell;
+	private CellStatus[][] iBoard;
+	private JLabel xWon;
+	private JLabel oWon;
 	private JButton quitButton;
+	private JButton undoButton;
+	private JButton resetButton;
+
+	private JMenuItem gameItem;
+	private JMenuItem quitItem;
+
 	private SuperTicTacToeGame game;
 
+	private ImageIcon emptyIcon;
 	private ImageIcon xIcon;
 	private ImageIcon oIcon;
-	private ImageIcon emptyIcon;
 
-	private void SuperTicTacToePanel() {
-		quitButton = new JButton("Quit Game");
+	public SuperTicTacToePanel(JMenuItem pquitItem,
+			JMenuItem pgameItem) {
 
-		JPanel panel1 = new JPanel();
-		JPanel panel2 = new JPanel();
+		gameItem = pgameItem;
+		quitItem = pquitItem;
 
-		ButtonListener buttonListen = new ButtonListener();
+		JPanel bottom = new JPanel();
+		JPanel center = new JPanel();
 
-		// TODO need these image files
-		xIcon = new ImageIcon("x.jpg");
-		oIcon = new ImageIcon("y.jpg");
-		emptyIcon = new ImageIcon("empty.jpg");
+		xIcon = new ImageIcon("src/package1/X.png");
+		oIcon = new ImageIcon("src/package1/O.png");
+		emptyIcon = new ImageIcon("src/package1/empty.png");
 
-		GridLayout layout = new GridLayout(3, 3);
+		// create game, listeners
+		ButtonListener listener = new ButtonListener();
 
-		game = new SuperTicTacToeGame();
+		game = new SuperTicTacToeGame(3);
 
-		panel1.setLayout(layout);
+		// create Undo and quit buttons.
+		quitButton = new JButton("Quit");
+		quitButton.addActionListener(listener);
+		undoButton = new JButton("Undo");
+		undoButton.addActionListener(listener);
+		resetButton = new JButton("Reset");
+		resetButton.addActionListener(listener);
 
-		for (int row = 0; row < SuperTicTacToeGame.BDSIZE; row++)
-			for (int col = 0; col < SuperTicTacToeGame.BDSIZE; col++) {
-				board[row][col] = new JButton("", emptyIcon);
-				board[row][col].addActionListener(buttonListen);
-				panel1.add(board[row][col]);
+		gameItem = new JMenuItem("Quit");
+		quitItem = new JMenuItem("New Game");
+
+		// Get input for board length
+		String inputValue = JOptionPane.showInputDialog(
+				"Please input a value between 3 and 9:");
+		int userInput = Integer.parseInt(inputValue);
+		game = new SuperTicTacToeGame(userInput);
+
+		// Get input for win length
+		String inputValue2 = JOptionPane.showInputDialog(
+				"Please input the number of marks in a row to win. \nNOTE: must be equal to or less than the board size");
+		int toWinInput = Integer.parseInt(inputValue2);
+		if (toWinInput <= userInput)
+			game.setConnections(toWinInput);
+		else
+			throw new IllegalArgumentException();
+
+		// create the board
+		center.setLayout(
+				new GridLayout(userInput, userInput, userInput, 2));
+		Dimension temp = new Dimension(100, 100);
+
+		board = new JButton[userInput][userInput];
+
+		for (int row = 0; row < board.length; row++)
+			for (int col = 0; col < board.length; col++) {
+
+				Border thickBorder = new LineBorder(Color.blue, 2);
+
+				board[row][col] = new JButton(" ");
+				board[row][col].setBorder(thickBorder);
+
+				board[row][col].addActionListener(listener);
+				board[row][col].setPreferredSize(temp);
+				center.add(board[row][col]);
 			}
+
+		displayBoard();
+
+		bottom.setLayout(new GridLayout(3, 2));
+
+		JLabel labxWins = new JLabel("X Wins: ");
+		JLabel laboWins = new JLabel("O Wins: ");
+		xWon = new JLabel("0");
+		oWon = new JLabel("0");
+
+		bottom.add(labxWins);
+		bottom.add(xWon);
+		bottom.add(laboWins);
+		bottom.add(oWon);
+		bottom.add(quitButton);
+		bottom.add(undoButton);
+		bottom.add(resetButton);
+
+		// add all to contentPane
+
+		add(new JLabel("!!!!!!  Super TicTacToe  !!!!!!"),
+				BorderLayout.NORTH);
+		add(center, BorderLayout.CENTER);
+		add(bottom, BorderLayout.SOUTH);
+
 	}
 
 	private void displayBoard() {
-		for (int row = 0; row < SuperTicTacToeGame.BDSIZE; row++)
-			for (int col = 0; col < SuperTicTacToeGame.BDSIZE; col++) {
-				iCell = game.getCell(row, col);
-				// TODO: ImageIcon icon = icon for iCell
-				board[row][col].setIcon(icon);
+		System.out.println(GameStatus.O_WON);
+		iBoard = game.getBoard();
+
+		for (int r = 0; r < board.length; r++)
+			for (int c = 0; c < board.length; c++) {
+
+				board[r][c].setText("");
+				if (iBoard[r][c] == CellStatus.O)
+					board[r][c].setIcon(oIcon);
+
+				else if (iBoard[r][c] == CellStatus.X)
+					board[r][c].setIcon(xIcon);
+
+				else if (iBoard[r][c] == CellStatus.EMPTY)
+					board[r][c].setIcon(emptyIcon);
 			}
+
 	}
 
 	private class ButtonListener implements ActionListener {
 
 		public void actionPerformed(ActionEvent e) {
-			for (int row = 0; row < SuperTicTacToeGame.BDSIZE; row++)
-				for (int col = 0; col < SuperTicTacToeGame.BDSIZE; col++)
-					if (board[row][col] == e.getSource())
-						// tell the game which button was selected.
-						game.select(row, col);
+			if (quitButton == e.getSource())
+				System.exit(0);
 
-			displayBoard();
+			if (quitItem == e.getSource())
+				System.exit(0);
 
+			if (resetButton == e.getSource()) {
+				game.reset();
+				// prompt for board and win size and first move
+				// also resets the board size
+				// Get input for board length
+				// run the constructor again?
+			}
+
+			// O wins
 			if (game.getGameStatus() == GameStatus.O_WON) {
 				JOptionPane.showMessageDialog(null,
 						"O won and X lost!\n The game will reset");
+				game.reset();
+				displayBoard();
+				oWon.setText(
+						"" + (Integer.parseInt(oWon.getText()) + 1));
+			}
+			// X wins
+			if (game.getGameStatus() == GameStatus.X_WON) {
+				JOptionPane.showMessageDialog(null,
+						"X won and O lost!\n The game will reset");
+				game.reset();
+				displayBoard();
+				xWon.setText(
+						"" + (Integer.parseInt(xWon.getText()) + 1));
 			}
 		}
 	}
