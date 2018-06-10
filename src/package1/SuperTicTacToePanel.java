@@ -29,20 +29,22 @@ public class SuperTicTacToePanel extends JPanel {
 	private JMenuItem gameItem;
 	private JMenuItem quitItem;
 
+	private JPanel bottom;
+	private JPanel center;
+
 	private SuperTicTacToeGame game;
 
 	private ImageIcon emptyIcon;
 	private ImageIcon xIcon;
 	private ImageIcon oIcon;
 
-	public SuperTicTacToePanel(JMenuItem pquitItem,
-			JMenuItem pgameItem) {
+	public SuperTicTacToePanel(JMenuItem pquitItem, JMenuItem pgameItem) {
 
 		gameItem = pgameItem;
 		quitItem = pquitItem;
 
-		JPanel bottom = new JPanel();
-		JPanel center = new JPanel();
+		bottom = new JPanel();
+		center = new JPanel();
 
 		xIcon = new ImageIcon("src/package1/X.png");
 		oIcon = new ImageIcon("src/package1/O.png");
@@ -64,27 +66,41 @@ public class SuperTicTacToePanel extends JPanel {
 		gameItem = new JMenuItem("Quit");
 		quitItem = new JMenuItem("New Game");
 
-		// Get input for board length
-		String inputValue = JOptionPane.showInputDialog(
-				"Please input a value between 3 and 9:");
-		int userInput = Integer.parseInt(inputValue);
-		game = new SuperTicTacToeGame(userInput);
+		int boardLength = 0;
+		int lengthToWin = 0;
 
-		// Get input for win length
-		String inputValue2 = JOptionPane.showInputDialog(
-				"Please input the number of marks in a row to win. \nNOTE: must be equal to or less than the board size");
-		int toWinInput = Integer.parseInt(inputValue2);
-		if (toWinInput <= userInput)
-			game.setConnections(toWinInput);
-		else
-			throw new IllegalArgumentException();
+		// Get input for board length
+
+		String inputValue = JOptionPane.showInputDialog("Please input a value between 3 and 9: ");
+
+		if (inputValue == (null)) {
+			System.exit(0);
+		} else {
+			boardLength = Integer.parseInt(inputValue);
+			if ((boardLength < 10 && boardLength > 2))
+				game = new SuperTicTacToeGame(boardLength);
+			else
+				throw new IllegalArgumentException();
+		}
+
+		// Get input for length of symbols to win
+		String rowValue = JOptionPane.showInputDialog("Please enter number of rows needed to win: ");
+
+		if (rowValue == null) {
+			System.exit(0);
+		} else {
+			lengthToWin = Integer.parseInt(rowValue);
+			if (lengthToWin <= boardLength)
+				game.setConnections(lengthToWin); // !
+			else
+				throw new IllegalArgumentException();
+		}
 
 		// create the board
-		center.setLayout(
-				new GridLayout(userInput, userInput, userInput, 2));
+		center.setLayout(new GridLayout(boardLength, boardLength, boardLength, 2));
 		Dimension temp = new Dimension(100, 100);
 
-		board = new JButton[userInput][userInput];
+		board = new JButton[boardLength][boardLength];
 
 		for (int row = 0; row < board.length; row++)
 			for (int col = 0; col < board.length; col++) {
@@ -118,15 +134,72 @@ public class SuperTicTacToePanel extends JPanel {
 
 		// add all to contentPane
 
-		add(new JLabel("!!!!!!  Super TicTacToe  !!!!!!"),
-				BorderLayout.NORTH);
+		add(new JLabel("!!!!!!  Super TicTacToe  !!!!!!"), BorderLayout.NORTH);
 		add(center, BorderLayout.CENTER);
 		add(bottom, BorderLayout.SOUTH);
 
 	}
 
+	private void remakeGame() {
+		int lengthToWin = 0;
+		int boardLength = 0;
+
+		ButtonListener listener = new ButtonListener();
+
+		Dimension temp = new Dimension(100, 100);
+		// Get input for board length
+
+		String inputValue = JOptionPane.showInputDialog("Please input a value between 3 and 9: ");
+
+		if (inputValue == (null)) {
+			System.exit(0);
+		} else {
+			boardLength = Integer.parseInt(inputValue);
+			if (boardLength < 10 && boardLength > 2)
+				game = new SuperTicTacToeGame(boardLength);
+			else
+				throw new IllegalArgumentException();
+		}
+
+		// Get input for length of symbols to win
+		String rowValue = JOptionPane.showInputDialog("Please enter number of rows needed to win: ");
+
+		if (rowValue == null) {
+			System.exit(0);
+		} else {
+			lengthToWin = Integer.parseInt(rowValue);
+			if (lengthToWin <= boardLength)
+				game.setConnections(lengthToWin); // !
+			else
+				throw new IllegalArgumentException();
+		}
+
+		game.resetGame();
+
+		board = new JButton[boardLength][boardLength];
+
+		center.setLayout(new GridLayout(boardLength, boardLength, boardLength, 2));
+
+		center.removeAll();
+		for (int row = 0; row < board.length; row++)
+			for (int col = 0; col < board.length; col++) {
+				{
+					Border thickBorder = new LineBorder(Color.blue, 2);
+
+					board[row][col] = new JButton(" ");
+					board[row][col].setBorder(thickBorder);
+
+					board[row][col].addActionListener(listener);
+					board[row][col].setPreferredSize(temp);
+
+					center.add(board[row][col]);
+				}
+			}
+		xWon.setText("0");
+		oWon.setText("0");
+	}
+
 	private void displayBoard() {
-		System.out.println(GameStatus.O_WON);
 		iBoard = game.getBoard();
 
 		for (int r = 0; r < board.length; r++)
@@ -142,7 +215,6 @@ public class SuperTicTacToePanel extends JPanel {
 				else if (iBoard[r][c] == CellStatus.EMPTY)
 					board[r][c].setIcon(emptyIcon);
 			}
-
 	}
 
 	private class ButtonListener implements ActionListener {
@@ -155,30 +227,35 @@ public class SuperTicTacToePanel extends JPanel {
 				System.exit(0);
 
 			if (resetButton == e.getSource()) {
-				game.reset();
-				// prompt for board and win size and first move
-				// also resets the board size
-				// Get input for board length
-				// run the constructor again?
+				remakeGame();
 			}
+
+			for (int r = 0; r < board.length; r++)
+				for (int c = 0; c < board.length; c++)
+					if (board[r][c] == e.getSource() && game.getOK(r, c))
+						game.select(r, c);
+
+			displayBoard();
 
 			// O wins
 			if (game.getGameStatus() == GameStatus.O_WON) {
-				JOptionPane.showMessageDialog(null,
-						"O won and X lost!\n The game will reset");
-				game.reset();
+				JOptionPane.showMessageDialog(null, "O won and X lost!\n The game will reset");
+				game.resetBoard();
 				displayBoard();
-				oWon.setText(
-						"" + (Integer.parseInt(oWon.getText()) + 1));
+				oWon.setText("" + (Integer.parseInt(oWon.getText()) + 1));
 			}
 			// X wins
 			if (game.getGameStatus() == GameStatus.X_WON) {
-				JOptionPane.showMessageDialog(null,
-						"X won and O lost!\n The game will reset");
-				game.reset();
+				JOptionPane.showMessageDialog(null, "X won and O lost!\n The game will reset");
+				game.resetBoard();
 				displayBoard();
-				xWon.setText(
-						"" + (Integer.parseInt(xWon.getText()) + 1));
+				xWon.setText("" + (Integer.parseInt(xWon.getText()) + 1));
+				displayBoard();
+			}
+			if (game.getGameStatus() == GameStatus.CATS) {
+				JOptionPane.showMessageDialog(null, "Cats game!\nThe game will reset");
+				game.resetBoard();
+				displayBoard();
 			}
 		}
 	}

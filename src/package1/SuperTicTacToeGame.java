@@ -3,6 +3,8 @@ package package1;
 import java.awt.Point;
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
+
 public class SuperTicTacToeGame {
 	private CellStatus[][] board;
 	private GameStatus status;
@@ -14,11 +16,10 @@ public class SuperTicTacToeGame {
 	public SuperTicTacToeGame(int size) {
 		status = GameStatus.IN_PROGRESS;
 		this.size = size;
-		this.connections = 0;
 		board = new CellStatus[size][size];
 		turn = CellStatus.X;
 		undoList = new ArrayList<Point>();
-		reset();
+		resetBoard();
 	}
 
 	public void setConnections(int connections) {
@@ -47,8 +48,6 @@ public class SuperTicTacToeGame {
 		status = isWinner();
 	}
 
-	// Check status if X or O wins
-	// Check if symbol wins
 	public GameStatus checkWin(int r, int c) {
 		int equalLengthX = 0;
 		int equalLengthO = 0;
@@ -69,11 +68,9 @@ public class SuperTicTacToeGame {
 				equalLengthOV++;
 			}
 
-			if (equalLengthX == connections
-					|| equalLengthXV == connections)
+			if (equalLengthX == connections || equalLengthXV == connections)
 				return GameStatus.X_WON;
-			if (equalLengthO == connections
-					|| equalLengthOV == connections)
+			if (equalLengthO == connections || equalLengthOV == connections)
 				return GameStatus.O_WON;
 		}
 		return GameStatus.IN_PROGRESS;
@@ -83,8 +80,7 @@ public class SuperTicTacToeGame {
 	private GameStatus isWinner() {
 		for (int r = 0; r < size; r++) { // row
 			for (int c = 0; c < size; c++) {// column
-				if (checkWin(r, c) == GameStatus.X_WON
-						|| checkWin(r, c) == GameStatus.O_WON)
+				if (checkWin(r, c) == GameStatus.X_WON || checkWin(r, c) == GameStatus.O_WON)
 					return checkWin(r, c);
 			}
 		}
@@ -93,9 +89,7 @@ public class SuperTicTacToeGame {
 				if (board[r][c] == CellStatus.EMPTY)
 					return GameStatus.IN_PROGRESS;
 			}
-
 		}
-
 		return GameStatus.CATS;
 	}
 
@@ -113,7 +107,22 @@ public class SuperTicTacToeGame {
 		return status;
 	}
 
-	public void reset() {
+	public void resetGame() {
+		resetBoard();
+		
+		String question = JOptionPane.showInputDialog("Who goes first? Type X or O");
+		if(question.equals("x") || question.equals("X")) {
+			turn = CellStatus.X;
+		}
+		
+		else if(question.equals("o")|| question.equals("O")) {
+			turn = CellStatus.O;
+		}
+		
+		status = GameStatus.IN_PROGRESS;
+	}
+
+	public void resetBoard() {
 		for (int r = 0; r < size; r++)
 			for (int c = 0; c < size; c++)
 				board[r][c] = CellStatus.EMPTY;

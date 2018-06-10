@@ -27,8 +27,7 @@ public class SuperTicTacToe {
 		frame.setJMenuBar(menus);
 		menus.add(fileMenu);
 
-		SuperTicTacToePanel panel = new SuperTicTacToePanel(quitItem,
-				gameItem);
+		SuperTicTacToePanel panel = new SuperTicTacToePanel(quitItem, gameItem);
 		frame.getContentPane().add(panel);
 
 		frame.setSize(1800, 1300);
