@@ -2,6 +2,7 @@ package package1;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Random;
 
 import javax.swing.JOptionPane;
 
@@ -38,14 +39,16 @@ public class SuperTicTacToeGame {
 
 		board[row][col] = turn;
 
+		undoList.add(new Point(col, row));
+
+		status = isWinner();
+	}
+
+	public void nextTurn() {
 		if (turn == CellStatus.O)
 			turn = CellStatus.X;
 		else
 			turn = CellStatus.O;
-
-		undoList.add(new Point(col, row));
-
-		status = isWinner();
 	}
 
 	public GameStatus checkWin(int r, int c) {
@@ -94,13 +97,18 @@ public class SuperTicTacToeGame {
 	}
 
 	public void undo() {
-		Point p = undoList.remove(undoList.size() - 1);
-		board[p.y][p.x] = CellStatus.EMPTY;
-
-		if (turn == CellStatus.O)
-			turn = CellStatus.X;
-		else
-			turn = CellStatus.O;
+		if (undoList.size() > 0) {
+			Point p = undoList.remove(undoList.size() - 1);
+			board[p.y][p.x] = CellStatus.EMPTY;
+		}
+	}
+	
+	public void undoTurnSwap() {
+		if (undoList.size() > 0) {
+			Point p = undoList.remove(undoList.size() - 1);
+			board[p.y][p.x] = CellStatus.EMPTY;
+			nextTurn();
+		}
 	}
 
 	public GameStatus getGameStatus() {
@@ -109,17 +117,19 @@ public class SuperTicTacToeGame {
 
 	public void resetGame() {
 		resetBoard();
-		
+
 		String question = JOptionPane.showInputDialog("Who goes first? Type X or O");
-		if(question.equals("x") || question.equals("X")) {
-			turn = CellStatus.X;
-		}
-		
-		else if(question.equals("o")|| question.equals("O")) {
-			turn = CellStatus.O;
-		}
-		
-		status = GameStatus.IN_PROGRESS;
+		if (question.equalsIgnoreCase("x") || question.equalsIgnoreCase("o")) {
+			if (question.equalsIgnoreCase("x")) {
+				turn = CellStatus.X;
+			}
+
+			else if (question.equalsIgnoreCase("o")) {
+				turn = CellStatus.O;
+			}
+			status = GameStatus.IN_PROGRESS;
+		} else
+			throw new IllegalArgumentException();
 	}
 
 	public void resetBoard() {
@@ -129,6 +139,49 @@ public class SuperTicTacToeGame {
 	}
 
 	public boolean getOK(int r, int c) {
-		return board[r][c] == CellStatus.EMPTY;
+		return (board[r][c] == CellStatus.EMPTY);
+	}
+
+	public void aiMove() {
+		// moves to win first
+		for (int r = 0; r < size; r++) {
+			for (int c = 0; c < size; c++) {
+				if (getOK(r, c)) {
+					select(r, c);
+					if (status == GameStatus.X_WON || status == GameStatus.O_WON)
+						return;
+					undo();
+				}
+			}
+		}
+
+		// moves to block second
+		for (int r = 0; r < size; r++) {
+			for (int c = 0; c < size; c++) {
+				if (getOK(r, c)) {
+					nextTurn();
+					select(r, c);
+					if (status == GameStatus.X_WON || status == GameStatus.O_WON) {
+						undo();
+						nextTurn();
+						select(r, c);
+						return;
+					}
+					undo();
+					nextTurn();
+				}
+			}
+		}
+		
+		// makes an adjacent move third
+		Random rand = new Random();
+		int r = rand.nextInt(size);
+		int c = rand.nextInt(size);
+
+		while (board[r][c] != CellStatus.EMPTY) {
+			r = rand.nextInt(size);
+			c = rand.nextInt(size);
+		}
+		select(r, c);
 	}
 }

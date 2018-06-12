@@ -4,6 +4,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 
 public class SuperTicTacToe {
 
@@ -13,6 +14,8 @@ public class SuperTicTacToe {
 		JMenu fileMenu;
 		JMenuItem quitItem;
 		JMenuItem gameItem;
+
+		SuperTicTacToePanel panel = null;
 
 		JFrame frame = new JFrame("Super Tic Tac Toe!");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -27,11 +30,18 @@ public class SuperTicTacToe {
 		frame.setJMenuBar(menus);
 		menus.add(fileMenu);
 
-		SuperTicTacToePanel panel = new SuperTicTacToePanel(quitItem, gameItem);
-		frame.getContentPane().add(panel);
+		while (panel == null) {
+			try {
+				panel = new SuperTicTacToePanel(quitItem, gameItem);
+				frame.getContentPane().add(panel);
 
-		frame.setSize(1800, 1300);
-		frame.setVisible(true);
+				frame.setSize(1800, 1300);
+				frame.setVisible(true);
+			} catch (Exception e) {
+				JOptionPane.showMessageDialog(null,
+						"Please enter an appropriate parameter");
+			}
+		}
 
 	}
 }

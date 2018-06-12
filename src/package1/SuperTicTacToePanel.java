@@ -38,6 +38,8 @@ public class SuperTicTacToePanel extends JPanel {
 	private ImageIcon xIcon;
 	private ImageIcon oIcon;
 
+	private boolean aiOn;
+
 	public SuperTicTacToePanel(JMenuItem pquitItem, JMenuItem pgameItem) {
 
 		gameItem = pgameItem;
@@ -66,12 +68,15 @@ public class SuperTicTacToePanel extends JPanel {
 		gameItem = new JMenuItem("Quit");
 		quitItem = new JMenuItem("New Game");
 
+		aiOn = false;
+
 		int boardLength = 0;
 		int lengthToWin = 0;
 
 		// Get input for board length
 
-		String inputValue = JOptionPane.showInputDialog("Please input a value between 3 and 9: ");
+		String inputValue = JOptionPane
+				.showInputDialog("Please input the size of the board\n(must be between 3 and 9)");
 
 		if (inputValue == (null)) {
 			System.exit(0);
@@ -90,9 +95,27 @@ public class SuperTicTacToePanel extends JPanel {
 			System.exit(0);
 		} else {
 			lengthToWin = Integer.parseInt(rowValue);
-			if (lengthToWin <= boardLength)
+			if (lengthToWin <= boardLength && lengthToWin > 1)
 				game.setConnections(lengthToWin); // !
 			else
+				throw new IllegalArgumentException();
+		}
+
+		game.resetGame();
+
+		String playerValue = JOptionPane.showInputDialog("1 or 2 players?");
+		int numPlayers = 0;
+
+		if (inputValue == (null)) {
+			System.exit(0);
+		} else {
+			numPlayers = Integer.parseInt(playerValue);
+			if (numPlayers == 1 || numPlayers == 2) {
+				if (numPlayers == 1)
+					aiOn = true;
+				else
+					aiOn = false;
+			} else
 				throw new IllegalArgumentException();
 		}
 
@@ -149,7 +172,8 @@ public class SuperTicTacToePanel extends JPanel {
 		Dimension temp = new Dimension(100, 100);
 		// Get input for board length
 
-		String inputValue = JOptionPane.showInputDialog("Please input a value between 3 and 9: ");
+		String inputValue = JOptionPane
+				.showInputDialog("Please input a the size of the board\n(must be between 3 and 9)");
 
 		if (inputValue == (null)) {
 			System.exit(0);
@@ -169,12 +193,28 @@ public class SuperTicTacToePanel extends JPanel {
 		} else {
 			lengthToWin = Integer.parseInt(rowValue);
 			if (lengthToWin <= boardLength)
-				game.setConnections(lengthToWin); // !
+				game.setConnections(lengthToWin);
 			else
 				throw new IllegalArgumentException();
 		}
 
 		game.resetGame();
+
+		String playerValue = JOptionPane.showInputDialog("1 or 2 players?");
+		int numPlayers = 0;
+
+		if (inputValue == (null)) {
+			System.exit(0);
+		} else {
+			numPlayers = Integer.parseInt(playerValue);
+			if (numPlayers < 3 && numPlayers > 0) {
+				if (numPlayers == 1)
+					aiOn = true;
+				else
+					aiOn = false;
+			} else
+				throw new IllegalArgumentException();
+		}
 
 		board = new JButton[boardLength][boardLength];
 
@@ -226,14 +266,26 @@ public class SuperTicTacToePanel extends JPanel {
 			if (quitItem == e.getSource())
 				System.exit(0);
 
-			if (resetButton == e.getSource()) {
+			if (resetButton == e.getSource())
 				remakeGame();
-			}
 
-			for (int r = 0; r < board.length; r++)
-				for (int c = 0; c < board.length; c++)
-					if (board[r][c] == e.getSource() && game.getOK(r, c))
+			if (undoButton == e.getSource())
+				game.undoTurnSwap();
+
+			for (int r = 0; r < board.length; r++) {
+				for (int c = 0; c < board.length; c++) {
+					if (board[r][c] == e.getSource() && game.getOK(r, c)) {
 						game.select(r, c);
+						game.nextTurn();
+						if (aiOn) {
+							if (game.getGameStatus() == GameStatus.IN_PROGRESS) {
+								game.aiMove();
+								game.nextTurn();
+							}
+						}
+					}
+				}
+			}
 
 			displayBoard();
 
